@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatheCheck - Mathe-Spass fuer Kinder!</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Willkommen-Screen -->
+    <div id="screen-welcome" class="screen active">
+        <div class="container">
+            <h1 class="title bounce">MatheCheck</h1>
+            <p class="subtitle">Werde zum Mathe-Champion!</p>
+            <div class="mascot">🦊</div>
+            <div class="welcome-form">
+                <label for="player-name">Wie heisst du?</label>
+                <input type="text" id="player-name" placeholder="Dein Name..." maxlength="20" autocomplete="off">
+                <button id="btn-start" class="btn btn-primary" disabled>Los geht's! 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level-Auswahl -->
+    <div id="screen-levels" class="screen">
+        <div class="container">
+            <div class="header">
+                <h2>Hallo, <span id="display-name"></span>! 👋</h2>
+                <button id="btn-logout" class="btn btn-small">Anderer Spieler</button>
+            </div>
+            <h3 class="section-title">Waehle ein Level:</h3>
+            <div class="level-grid">
+                <button class="level-card level-unlocked" data-level="1">
+                    <div class="level-icon">➕</div>
+                    <div class="level-number">Level 1</div>
+                    <div class="level-desc">Addition bis 20</div>
+                    <div class="level-stars" id="stars-level-1"></div>
+                </button>
+                <button class="level-card level-locked" disabled>
+                    <div class="level-icon">🔒</div>
+                    <div class="level-number">Level 2</div>
+                    <div class="level-desc">Kommt bald!</div>
+                </button>
+                <button class="level-card level-locked" disabled>
+                    <div class="level-icon">🔒</div>
+                    <div class="level-number">Level 3</div>
+                    <div class="level-desc">Kommt bald!</div>
+                </button>
+            </div>
+            <div class="stats-box">
+                <h4>Deine Statistik</h4>
+                <div class="stats-grid">
+                    <div class="stat">
+                        <span class="stat-value" id="stat-rounds">0</span>
+                        <span class="stat-label">Runden gespielt</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="stat-best">0</span>
+                        <span class="stat-label">Bester Score</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spiel-Screen -->
+    <div id="screen-game" class="screen">
+        <div class="container">
+            <div class="game-header">
+                <div class="game-info">
+                    <span id="game-level">Level 1</span>
+                    <span id="game-score">✅ 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <span class="progress-text" id="progress-text">1 / 30</span>
+                </div>
+            </div>
+            <div class="game-area">
+                <div class="task-display" id="task-display">
+                    <span id="task-num1">5</span>
+                    <span id="task-op">+</span>
+                    <span id="task-num2">3</span>
+                    <span class="task-equals">=</span>
+                    <span class="task-question">?</span>
+                </div>
+                <div class="answer-area">
+                    <input type="number" id="answer-input" class="answer-input" placeholder="?" autocomplete="off" inputmode="numeric">
+                    <button id="btn-check" class="btn btn-primary">Pruefen ✔️</button>
+                </div>
+                <div id="feedback" class="feedback hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ergebnis-Screen -->
+    <div id="screen-result" class="screen">
+        <div class="container">
+            <h2 id="result-title" class="result-title">Runde geschafft!</h2>
+            <div class="result-stats">
+                <div class="result-score">
+                    <span class="big-score" id="result-score">25</span>
+                    <span class="score-label">von 30 richtig</span>
+                </div>
+                <div class="result-stars" id="result-stars"></div>
+                <div class="result-message" id="result-message"></div>
+            </div>
+            <div class="joke-box" id="joke-box">
+                <div class="joke-label">🤡 Witz des Tages:</div>
+                <p class="joke-text" id="joke-text"></p>
+            </div>
+            <div class="result-buttons">
+                <button id="btn-retry" class="btn btn-primary">Nochmal spielen! 🔄</button>
+                <button id="btn-back-levels" class="btn btn-secondary">Zurueck zur Auswahl</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Konfetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="js/storage.js"></script>
+    <script src="js/jokes.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
