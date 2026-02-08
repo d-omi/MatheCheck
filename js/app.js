@@ -65,7 +65,10 @@ const App = (() => {
             }
         });
 
-        els.btnStart.addEventListener('click', goToLevels);
+        els.btnStart.addEventListener('click', () => {
+            Sounds.click();
+            goToLevels();
+        });
     }
 
     function goToLevels() {
@@ -108,6 +111,7 @@ const App = (() => {
         });
 
         document.querySelector('[data-level="1"]').addEventListener('click', () => {
+            Sounds.click();
             startGame(1);
         });
     }
@@ -157,15 +161,20 @@ const App = (() => {
         if (result.isCorrect) {
             els.feedback.classList.add('correct');
             els.feedback.textContent = randomPraise();
+            Sounds.correct();
         } else {
             els.feedback.classList.add('wrong');
             els.feedback.textContent = 'Die Antwort ist ' + result.correctAnswer + '!';
             els.taskDisplay.classList.add('shake');
+            Sounds.wrong();
         }
 
         if (result.isRoundOver) {
             // Kurz warten, dann Ergebnis zeigen
-            setTimeout(() => showResult(result.score), 1200);
+            setTimeout(() => {
+                Sounds.roundComplete();
+                showResult(result.score);
+            }, 1200);
         } else {
             feedbackTimeout = setTimeout(() => {
                 nextTask();
@@ -219,8 +228,12 @@ const App = (() => {
     }
 
     function initResult() {
-        els.btnRetry.addEventListener('click', () => startGame(1));
+        els.btnRetry.addEventListener('click', () => {
+            Sounds.click();
+            startGame(1);
+        });
         els.btnBackLevels.addEventListener('click', () => {
+            Sounds.click();
             showLevelScreen(Storage.getPlayerName());
         });
     }

@@ -15,6 +15,7 @@ index.html          - Alle Screens (Welcome, Levels, Game, Result)
 css/style.css       - Gesamtes Styling
 js/storage.js       - localStorage Wrapper (Spielername, Level-Stats)
 js/jokes.js         - Kinderwitze-Sammlung
+js/sounds.js        - Dezente Sound-Effekte via Web Audio API
 js/game.js          - Spiellogik (Aufgaben generieren, Antworten pruefen)
 js/app.js           - Hauptlogik (Screen-Navigation, Event-Handler, UI-Updates)
 ```
@@ -24,6 +25,7 @@ js/app.js           - Hauptlogik (Screen-Navigation, Event-Handler, UI-Updates)
 Jedes JS-Modul ist ein IIFE das ein globales Objekt exponiert:
 - `Storage` - liest/schreibt localStorage
 - `Jokes` - liefert zufaellige Witze
+- `Sounds` - dezente Audio-Effekte (Web Audio API, keine Dateien)
 - `Game` - Spielzustand und Logik
 - `App` - initialisiert alles, verbindet UI mit Logik
 
