@@ -93,8 +93,21 @@
                     <span class="task-question">?</span>
                 </div>
                 <div class="answer-area">
-                    <input type="number" id="answer-input" class="answer-input" placeholder="?" autocomplete="off" inputmode="numeric">
-                    <button id="btn-check" class="btn btn-primary">Prüfen ✔️</button>
+                    <div id="answer-display" class="answer-display">?</div>
+                </div>
+                <div class="numpad">
+                    <button class="numpad-btn" data-num="1">1</button>
+                    <button class="numpad-btn" data-num="2">2</button>
+                    <button class="numpad-btn" data-num="3">3</button>
+                    <button class="numpad-btn" data-num="4">4</button>
+                    <button class="numpad-btn" data-num="5">5</button>
+                    <button class="numpad-btn" data-num="6">6</button>
+                    <button class="numpad-btn" data-num="7">7</button>
+                    <button class="numpad-btn" data-num="8">8</button>
+                    <button class="numpad-btn" data-num="9">9</button>
+                    <button class="numpad-btn numpad-del" data-action="delete">⌫</button>
+                    <button class="numpad-btn" data-num="0">0</button>
+                    <button class="numpad-btn numpad-ok" data-action="submit">OK</button>
                 </div>
                 <div id="feedback" class="feedback hidden"></div>
             </div>

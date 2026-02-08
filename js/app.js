@@ -22,8 +22,8 @@ const App = (() => {
         taskOp: document.getElementById('task-op'),
         taskNum2: document.getElementById('task-num2'),
         taskDisplay: document.getElementById('task-display'),
-        answerInput: document.getElementById('answer-input'),
-        btnCheck: document.getElementById('btn-check'),
+        answerDisplay: document.getElementById('answer-display'),
+        numpad: document.querySelector('.numpad'),
         feedback: document.getElementById('feedback'),
         progressFill: document.getElementById('progress-fill'),
         progressText: document.getElementById('progress-text'),
@@ -47,6 +47,25 @@ const App = (() => {
     let feedbackTimeout = null;
     let currentStreak = 0;
     let isProcessing = false;
+    let currentAnswer = '';
+
+    // ===== Numpad Antwort-Verwaltung =====
+    function setAnswer(val) {
+        currentAnswer = val;
+        els.answerDisplay.textContent = val || '?';
+        els.answerDisplay.classList.toggle('has-value', val.length > 0);
+    }
+
+    function appendDigit(digit) {
+        if (isProcessing) return;
+        if (currentAnswer.length >= 3) return; // Max 3 Stellen (Addition bis 20)
+        setAnswer(currentAnswer + digit);
+    }
+
+    function deleteDigit() {
+        if (isProcessing) return;
+        setAnswer(currentAnswer.slice(0, -1));
+    }
 
     // ===== Hintergrund-Partikel =====
     function initBgParticles() {
@@ -202,8 +221,7 @@ const App = (() => {
         }
 
         els.countdownOverlay.classList.remove('hidden');
-        els.answerInput.disabled = true;
-        els.btnCheck.disabled = true;
+        isProcessing = true;
 
         let count = 3;
         els.countdownNumber.textContent = count;
@@ -225,8 +243,7 @@ const App = (() => {
             } else {
                 clearInterval(interval);
                 els.countdownOverlay.classList.add('hidden');
-                els.answerInput.disabled = false;
-                els.btnCheck.disabled = false;
+                isProcessing = false;
                 setMascot('idle');
                 nextTask();
             }
@@ -242,8 +259,7 @@ const App = (() => {
         els.taskOp.textContent = task.op;
         els.taskNum2.textContent = task.num2;
 
-        els.answerInput.value = '';
-        els.answerInput.focus();
+        setAnswer('');
         els.feedback.classList.add('hidden');
         isProcessing = false;
 
@@ -275,11 +291,10 @@ const App = (() => {
 
     function handleAnswer() {
         if (isProcessing) return;
-        const value = els.answerInput.value.trim();
-        if (value === '') return;
+        if (currentAnswer === '') return;
         isProcessing = true;
 
-        const result = Game.checkAnswer(value);
+        const result = Game.checkAnswer(currentAnswer);
 
         if (feedbackTimeout) clearTimeout(feedbackTimeout);
         els.feedback.classList.remove('hidden', 'correct', 'wrong');
@@ -315,10 +330,6 @@ const App = (() => {
             updateStreakDisplay();
         }
 
-        // Fokus sofort zurück aufs Eingabefeld (Tastatur bleibt auf Mobile offen)
-        els.answerInput.value = '';
-        els.answerInput.focus();
-
         if (result.isRoundOver) {
             setTimeout(() => {
                 Sounds.roundComplete();
@@ -342,17 +353,31 @@ const App = (() => {
     }
 
     function initGame() {
-        // mousedown statt click: verhindert dass der Button den Fokus vom Input klaut
-        els.btnCheck.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            handleAnswer();
+        // Numpad: Ziffern, Löschen, Absenden
+        els.numpad.addEventListener('click', (e) => {
+            const btn = e.target.closest('.numpad-btn');
+            if (!btn) return;
+            Sounds.click();
+
+            if (btn.dataset.num !== undefined) {
+                appendDigit(btn.dataset.num);
+            } else if (btn.dataset.action === 'delete') {
+                deleteDigit();
+            } else if (btn.dataset.action === 'submit') {
+                handleAnswer();
+            }
         });
-        els.btnCheck.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleAnswer();
-        });
-        els.answerInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleAnswer();
+
+        // Tastatur-Support bleibt für Desktop
+        document.addEventListener('keydown', (e) => {
+            if (!screens.game.classList.contains('active')) return;
+            if (e.key >= '0' && e.key <= '9') {
+                appendDigit(e.key);
+            } else if (e.key === 'Backspace') {
+                deleteDigit();
+            } else if (e.key === 'Enter') {
+                handleAnswer();
+            }
         });
     }
 
