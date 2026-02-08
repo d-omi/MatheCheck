@@ -315,6 +315,10 @@ const App = (() => {
             updateStreakDisplay();
         }
 
+        // Fokus sofort zurück aufs Eingabefeld (Tastatur bleibt auf Mobile offen)
+        els.answerInput.value = '';
+        els.answerInput.focus();
+
         if (result.isRoundOver) {
             setTimeout(() => {
                 Sounds.roundComplete();
@@ -338,7 +342,15 @@ const App = (() => {
     }
 
     function initGame() {
-        els.btnCheck.addEventListener('click', handleAnswer);
+        // mousedown statt click: verhindert dass der Button den Fokus vom Input klaut
+        els.btnCheck.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleAnswer();
+        });
+        els.btnCheck.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleAnswer();
+        });
         els.answerInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') handleAnswer();
         });
