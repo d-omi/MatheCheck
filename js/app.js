@@ -147,7 +147,6 @@ const App = (() => {
         const name = els.playerName.value.trim();
         if (!name) return;
         Storage.setPlayerName(name);
-        Sounds.welcome(name);
         showLevelScreen(name);
     }
 
@@ -312,13 +311,13 @@ const App = (() => {
             els.feedback.textContent = 'Die Antwort ist ' + result.correctAnswer + '!';
             els.taskDisplay.classList.add('task-wrong');
             setMascot('sad');
-            Sounds.wrong(result.correctAnswer);
+            Sounds.wrong();
             updateStreakDisplay();
         }
 
         if (result.isRoundOver) {
             setTimeout(() => {
-                Sounds.roundComplete(result.score, result.totalTasks);
+                Sounds.roundComplete();
                 showResult(result.score);
             }, 1500);
         } else {
