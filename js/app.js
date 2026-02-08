@@ -212,15 +212,15 @@ const App = (() => {
             els.resultMessage.textContent = 'Alle richtig – du bist ein Mathe-Genie!';
             launchConfetti();
         } else if (pct >= 0.8) {
-            els.resultTitle.textContent = 'Grossartig! 🎉';
+            els.resultTitle.textContent = 'Großartig! 🎉';
             els.resultMessage.textContent = 'Fast alles richtig – super gemacht!';
             launchConfetti();
         } else if (pct >= 0.5) {
             els.resultTitle.textContent = 'Gut gemacht! 👍';
-            els.resultMessage.textContent = 'Uebe weiter, du wirst immer besser!';
+            els.resultMessage.textContent = 'Übe weiter, du wirst immer besser!';
         } else {
-            els.resultTitle.textContent = 'Weiter ueben! 💪';
-            els.resultMessage.textContent = 'Uebung macht den Meister – versuch es nochmal!';
+            els.resultTitle.textContent = 'Weiter üben! 💪';
+            els.resultMessage.textContent = 'Übung macht den Meister – versuch es nochmal!';
         }
 
         els.jokeText.textContent = Jokes.getRandom();

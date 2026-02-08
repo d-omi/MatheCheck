@@ -17,7 +17,7 @@ const Storage = (() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
-    /** Gibt den gespeicherten Spielernamen zurueck oder null. */
+    /** Gibt den gespeicherten Spielernamen zurück oder null. */
     function getPlayerName() {
         return _loadAll().playerName || null;
     }
@@ -29,14 +29,14 @@ const Storage = (() => {
         _saveAll(data);
     }
 
-    /** Loescht den Spielernamen (Logout). */
+    /** Löscht den Spielernamen (Logout). */
     function clearPlayerName() {
         const data = _loadAll();
         delete data.playerName;
         _saveAll(data);
     }
 
-    /** Gibt die Stats fuer ein Level zurueck. */
+    /** Gibt die Stats für ein Level zurück. */
     function getLevelStats(level) {
         const data = _loadAll();
         const stats = data.levels && data.levels[level];

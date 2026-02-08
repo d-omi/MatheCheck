@@ -1,6 +1,6 @@
 /**
- * Sound-Modul: Dezente Toene via Web Audio API.
- * Keine externen Dateien noetig.
+ * Sound-Modul: Dezente Töne via Web Audio API.
+ * Keine externen Dateien nötig.
  */
 const Sounds = (() => {
     let ctx = null;
@@ -32,7 +32,7 @@ const Sounds = (() => {
             osc.start(ac.currentTime);
             osc.stop(ac.currentTime + duration);
         } catch {
-            // Audio nicht verfuegbar - kein Problem
+            // Audio nicht verfügbar - kein Problem
         }
     }
 

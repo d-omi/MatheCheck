@@ -1,5 +1,5 @@
 /**
- * Spiellogik fuer MatheCheck.
+ * Spiellogik für MatheCheck.
  */
 const Game = (() => {
     const TASKS_PER_ROUND = 30;
@@ -29,7 +29,7 @@ const Game = (() => {
         score = 0;
     }
 
-    /** Prueft die Antwort und gibt Ergebnis zurueck. */
+    /** Prüft die Antwort und gibt Ergebnis zurück. */
     function checkAnswer(playerAnswer) {
         const isCorrect = parseInt(playerAnswer, 10) === correctAnswer;
         if (isCorrect) score++;
