@@ -8,6 +8,7 @@
 :root {
     --primary: #6C63FF;
     --primary-dark: #5A52D5;
+    --primary-glow: rgba(108, 99, 255, 0.4);
     --success: #4CAF50;
     --success-light: #E8F5E9;
     --error: #FF5252;
@@ -18,9 +19,9 @@
     --text: #333333;
     --text-light: #777777;
     --shadow: 0 4px 15px rgba(108, 99, 255, 0.15);
-    --shadow-hover: 0 6px 25px rgba(108, 99, 255, 0.25);
-    --radius: 16px;
-    --radius-sm: 10px;
+    --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.3);
+    --radius: 20px;
+    --radius-sm: 12px;
 }
 
 body {
@@ -29,6 +30,43 @@ body {
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
+}
+
+/* ===== Schwebende Hintergrund-Partikel ===== */
+.bg-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-particle {
+    position: absolute;
+    bottom: -40px;
+    animation: floatUp linear infinite;
+    user-select: none;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.2;
+    }
+    90% {
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 /* ===== Screen System ===== */
@@ -36,7 +74,9 @@ body {
     display: none;
     min-height: 100vh;
     padding: 20px;
-    animation: fadeIn 0.4s ease;
+    animation: screenIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 1;
 }
 
 .screen.active {
@@ -45,9 +85,9 @@ body {
     justify-content: center;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes screenIn {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .container {
@@ -56,34 +96,122 @@ body {
     margin: 0 auto;
 }
 
-/* ===== Willkommen Screen ===== */
-.title {
-    font-size: 3rem;
+/* ===== Regenbogen-Titel ===== */
+.rainbow-text {
+    font-size: 3.2rem;
     text-align: center;
-    color: var(--primary);
-    text-shadow: 2px 2px 0 rgba(108, 99, 255, 0.2);
+    font-weight: 900;
+    background: linear-gradient(90deg, #FF6B6B, #FFE66D, #4ECDC4, #6C63FF, #FF6B6B);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowSlide 3s linear infinite;
     margin-bottom: 5px;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+}
+
+@keyframes rainbowSlide {
+    to { background-position: 200% center; }
 }
 
 .subtitle {
     text-align: center;
     font-size: 1.2rem;
     color: var(--text-light);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
+/* ===== Maskottchen ===== */
 .mascot {
     text-align: center;
+    user-select: none;
+}
+
+.mascot-big {
     font-size: 5rem;
-    margin: 10px 0 25px;
+    margin: 10px 0 20px;
+}
+
+.mascot-game {
+    font-size: 3rem;
+    transition: all 0.3s;
+}
+
+.mascot-result {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.game-mascot-row {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.wiggle {
     animation: wiggle 2s ease-in-out infinite;
 }
 
 @keyframes wiggle {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
+    0%, 100% { transform: rotate(-8deg) scale(1); }
+    25% { transform: rotate(8deg) scale(1.05); }
+    50% { transform: rotate(-5deg) scale(1); }
+    75% { transform: rotate(5deg) scale(1.02); }
 }
 
+.mascot-bounce {
+    animation: mascotBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes mascotBounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+.mascot-spin {
+    animation: mascotSpin 0.6s ease;
+}
+
+@keyframes mascotSpin {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.3) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.mascot-shake {
+    animation: mascotShake 0.5s ease;
+}
+
+@keyframes mascotShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px) rotate(-5deg); }
+    40% { transform: translateX(8px) rotate(5deg); }
+    60% { transform: translateX(-5px) rotate(-3deg); }
+    80% { transform: translateX(5px) rotate(3deg); }
+}
+
+/* ===== Mini-Partikel bei richtiger Antwort ===== */
+.mini-particle {
+    position: absolute;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: miniFloat ease-out forwards;
+    z-index: 10;
+}
+
+@keyframes miniFloat {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-120px) translateX(var(--dx, 0px)) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* ===== Willkommen Form ===== */
 .welcome-form {
     background: var(--card-bg);
     padding: 30px;
@@ -106,12 +234,13 @@ body {
     border: 3px solid #E0E0E0;
     border-radius: var(--radius-sm);
     outline: none;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
     text-align: center;
 }
 
 .welcome-form input:focus {
     border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
 /* ===== Buttons ===== */
@@ -125,6 +254,26 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+}
+
+.btn:active::after {
+    width: 300px;
+    height: 300px;
 }
 
 .btn:active {
@@ -132,22 +281,30 @@ body {
 }
 
 .btn-primary {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), #8B7FFF);
     color: white;
-    box-shadow: 0 4px 0 var(--primary-dark);
+    box-shadow: 0 4px 0 var(--primary-dark), 0 6px 20px var(--primary-glow);
     width: 100%;
     margin-top: 15px;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 #4840B0;
+    box-shadow: 0 6px 0 #4840B0, 0 10px 30px var(--primary-glow);
 }
 
 .btn-primary:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+.btn-bounce:not(:disabled):hover {
+    animation: btnBounce 0.4s ease;
+}
+
+@keyframes btnBounce {
+    0%, 100% { transform: translateY(-2px); }
+    50% { transform: translateY(-6px); }
 }
 
 .btn-secondary {
@@ -210,13 +367,13 @@ body {
     padding: 18px 10px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
     box-shadow: var(--shadow);
     font-family: inherit;
 }
 
 .level-card.level-unlocked:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.03);
     box-shadow: var(--shadow-hover);
     border-color: var(--primary);
 }
@@ -229,6 +386,15 @@ body {
 .level-icon {
     font-size: 2rem;
     margin-bottom: 8px;
+}
+
+.level-icon-bounce {
+    animation: levelIconFloat 2s ease-in-out infinite;
+}
+
+@keyframes levelIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
 
 .level-number {
@@ -288,7 +454,7 @@ body {
 
 /* ===== Spiel Screen ===== */
 .game-header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .game-info {
@@ -310,10 +476,16 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), #9C8FFF);
+    background: linear-gradient(90deg, var(--primary), #9C8FFF, #FF6B9D);
+    background-size: 200% auto;
+    animation: progressShimmer 2s linear infinite;
     border-radius: 15px;
-    transition: width 0.4s ease;
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     width: 0%;
+}
+
+@keyframes progressShimmer {
+    to { background-position: 200% center; }
 }
 
 .progress-text {
@@ -326,24 +498,63 @@ body {
     color: var(--text);
 }
 
+/* ===== Streak Anzeige ===== */
+.streak-display {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--warning);
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--warning);
+}
+
+.streak-display.hidden {
+    display: none;
+}
+
+.streak-pop {
+    animation: streakPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes streakPop {
+    0% { transform: scale(0.8); }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ===== Spiel-Bereich ===== */
 .game-area {
     background: var(--card-bg);
     border-radius: var(--radius);
-    padding: 30px 25px;
+    padding: 25px 20px;
     box-shadow: var(--shadow);
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .task-display {
     font-size: 3rem;
     font-weight: 800;
-    margin-bottom: 25px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    transition: transform 0.3s;
+    transition: all 0.3s;
+    border-radius: var(--radius-sm);
+}
+
+.task-correct {
+    background: var(--success-light);
+}
+
+.task-wrong {
+    background: var(--error-light);
 }
 
 .task-equals {
@@ -353,10 +564,16 @@ body {
 .task-question {
     color: var(--primary);
     font-size: 3.5rem;
+    animation: questionPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes questionPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
 }
 
 .answer-input {
-    width: 120px;
+    width: 130px;
     padding: 14px;
     font-size: 2rem;
     font-weight: 700;
@@ -364,7 +581,7 @@ body {
     border: 3px solid #E0E0E0;
     border-radius: var(--radius-sm);
     outline: none;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
     font-family: inherit;
     -moz-appearance: textfield;
 }
@@ -377,6 +594,8 @@ body {
 
 .answer-input:focus {
     border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+    transform: scale(1.05);
 }
 
 .answer-area {
@@ -390,10 +609,51 @@ body {
     max-width: 250px;
 }
 
+/* ===== Countdown Overlay ===== */
+.countdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(240, 244, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border-radius: var(--radius);
+}
+
+.countdown-overlay.hidden {
+    display: none;
+}
+
+.countdown-num {
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.countdown-pop {
+    animation: countdownPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes countdownPop {
+    0% { transform: scale(0.3); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.countdown-go {
+    color: var(--success);
+    text-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
 /* ===== Feedback ===== */
 .feedback {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 15px;
+    padding: 12px 18px;
     border-radius: var(--radius-sm);
     font-size: 1.2rem;
     font-weight: 700;
@@ -407,18 +667,25 @@ body {
 .feedback.correct {
     background: var(--success-light);
     color: var(--success);
+    animation: feedbackPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .feedback.wrong {
     background: var(--error-light);
     color: var(--error);
+    animation: feedbackPop 0.3s ease;
+}
+
+@keyframes feedbackPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* ===== Ergebnis Screen ===== */
 .result-title {
     text-align: center;
     font-size: 1.8rem;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: var(--primary);
 }
 
@@ -436,9 +703,19 @@ body {
 }
 
 .big-score {
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 800;
-    color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), #FF6B9D);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: scorePop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scorePop {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 .score-label {
@@ -450,6 +727,12 @@ body {
 .result-stars {
     font-size: 2.5rem;
     margin: 10px 0;
+    animation: starsIn 0.6s ease 0.3s both;
+}
+
+@keyframes starsIn {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
 }
 
 .result-message {
@@ -461,12 +744,18 @@ body {
 
 /* ===== Witz-Box ===== */
 .joke-box {
-    background: #FFF9E6;
+    background: linear-gradient(135deg, #FFF9E6, #FFF3D4);
     border: 2px dashed var(--warning);
     border-radius: var(--radius);
     padding: 20px;
     margin-bottom: 20px;
     text-align: center;
+    animation: jokeIn 0.5s ease 0.5s both;
+}
+
+@keyframes jokeIn {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 .joke-label {
@@ -509,7 +798,7 @@ body {
 }
 
 .pop {
-    animation: pop 0.3s ease;
+    animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes pop {
@@ -530,8 +819,12 @@ body {
 
 /* ===== Responsive ===== */
 @media (max-width: 400px) {
-    .title {
-        font-size: 2.2rem;
+    .rainbow-text {
+        font-size: 2.4rem;
+    }
+
+    .mascot-big {
+        font-size: 4rem;
     }
 
     .task-display {
@@ -548,11 +841,14 @@ body {
     }
 
     .level-grid {
-        grid-template-columns: repeat(3, 1fr);
         gap: 8px;
     }
 
     .big-score {
-        font-size: 3rem;
+        font-size: 3.5rem;
+    }
+
+    .countdown-num {
+        font-size: 4rem;
     }
 }

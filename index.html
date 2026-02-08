@@ -8,16 +8,19 @@
 </head>
 <body>
 
+    <!-- Schwebende Hintergrund-Partikel -->
+    <div id="bg-particles" class="bg-particles"></div>
+
     <!-- Willkommen-Screen -->
     <div id="screen-welcome" class="screen active">
         <div class="container">
-            <h1 class="title bounce">MatheCheck</h1>
+            <h1 class="title rainbow-text">MatheCheck</h1>
             <p class="subtitle">Werde zum Mathe-Champion!</p>
-            <div class="mascot">🦊</div>
+            <div class="mascot mascot-big wiggle">🦊</div>
             <div class="welcome-form">
                 <label for="player-name">Wie heißt du?</label>
                 <input type="text" id="player-name" placeholder="Dein Name..." maxlength="20" autocomplete="off">
-                <button id="btn-start" class="btn btn-primary" disabled>Los geht's! 🚀</button>
+                <button id="btn-start" class="btn btn-primary btn-bounce" disabled>Los geht's! 🚀</button>
             </div>
         </div>
     </div>
@@ -32,7 +35,7 @@
             <h3 class="section-title">Wähle ein Level:</h3>
             <div class="level-grid">
                 <button class="level-card level-unlocked" data-level="1">
-                    <div class="level-icon">➕</div>
+                    <div class="level-icon level-icon-bounce">➕</div>
                     <div class="level-number">Level 1</div>
                     <div class="level-desc">Addition bis 20</div>
                     <div class="level-stars" id="stars-level-1"></div>
@@ -49,7 +52,7 @@
                 </button>
             </div>
             <div class="stats-box">
-                <h4>Deine Statistik</h4>
+                <h4>📊 Deine Statistik</h4>
                 <div class="stats-grid">
                     <div class="stat">
                         <span class="stat-value" id="stat-rounds">0</span>
@@ -76,8 +79,12 @@
                     <div class="progress-fill" id="progress-fill"></div>
                     <span class="progress-text" id="progress-text">1 / 30</span>
                 </div>
+                <div id="streak-display" class="streak-display hidden"></div>
             </div>
             <div class="game-area">
+                <div class="game-mascot-row">
+                    <div id="game-mascot" class="mascot mascot-game">🦊</div>
+                </div>
                 <div class="task-display" id="task-display">
                     <span id="task-num1">5</span>
                     <span id="task-op">+</span>
@@ -91,12 +98,18 @@
                 </div>
                 <div id="feedback" class="feedback hidden"></div>
             </div>
+
+            <!-- Countdown Overlay -->
+            <div id="countdown-overlay" class="countdown-overlay hidden">
+                <div id="countdown-number" class="countdown-num">3</div>
+            </div>
         </div>
     </div>
 
     <!-- Ergebnis-Screen -->
     <div id="screen-result" class="screen">
         <div class="container">
+            <div id="result-mascot" class="mascot mascot-result wiggle">🥳</div>
             <h2 id="result-title" class="result-title">Runde geschafft!</h2>
             <div class="result-stats">
                 <div class="result-score">
@@ -106,12 +119,12 @@
                 <div class="result-stars" id="result-stars"></div>
                 <div class="result-message" id="result-message"></div>
             </div>
-            <div class="joke-box" id="joke-box">
+            <div class="joke-box">
                 <div class="joke-label">🤡 Witz des Tages:</div>
                 <p class="joke-text" id="joke-text"></p>
             </div>
             <div class="result-buttons">
-                <button id="btn-retry" class="btn btn-primary">Nochmal spielen! 🔄</button>
+                <button id="btn-retry" class="btn btn-primary btn-bounce">Nochmal spielen! 🔄</button>
                 <button id="btn-back-levels" class="btn btn-secondary">Zurück zur Auswahl</button>
             </div>
         </div>

@@ -1,9 +1,8 @@
 /**
- * MatheCheck - Haupt-App-Logik.
- * Verbindet Screens, Game-Engine, Storage und UI.
+ * MatheCheck - Haupt-App-Logik (Verspielt-Edition).
+ * Maskottchen, Streaks, Countdown, Partikel, Sprachausgabe.
  */
 const App = (() => {
-    // DOM-Elemente
     const screens = {
         welcome: document.getElementById('screen-welcome'),
         levels: document.getElementById('screen-levels'),
@@ -29,17 +28,90 @@ const App = (() => {
         progressFill: document.getElementById('progress-fill'),
         progressText: document.getElementById('progress-text'),
         gameScore: document.getElementById('game-score'),
+        mascot: document.getElementById('game-mascot'),
+        streakDisplay: document.getElementById('streak-display'),
+        countdownOverlay: document.getElementById('countdown-overlay'),
+        countdownNumber: document.getElementById('countdown-number'),
         resultTitle: document.getElementById('result-title'),
         resultScore: document.getElementById('result-score'),
         resultStars: document.getElementById('result-stars'),
         resultMessage: document.getElementById('result-message'),
+        resultMascot: document.getElementById('result-mascot'),
         jokeText: document.getElementById('joke-text'),
         btnRetry: document.getElementById('btn-retry'),
         btnBackLevels: document.getElementById('btn-back-levels'),
-        confettiCanvas: document.getElementById('confetti-canvas')
+        confettiCanvas: document.getElementById('confetti-canvas'),
+        bgParticles: document.getElementById('bg-particles')
     };
 
     let feedbackTimeout = null;
+    let currentStreak = 0;
+    let isProcessing = false;
+
+    // ===== Hintergrund-Partikel =====
+    function initBgParticles() {
+        const symbols = ['➕', '➖', '✖️', '➗', '🔢', '💯', '🧮', '⭐', '🌟', '✨', '💫', '🎯'];
+        const container = els.bgParticles;
+        if (!container) return;
+
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'bg-particle';
+            particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (15 + Math.random() * 20) + 's';
+            particle.style.animationDelay = -(Math.random() * 20) + 's';
+            particle.style.fontSize = (14 + Math.random() * 20) + 'px';
+            particle.style.opacity = 0.15 + Math.random() * 0.15;
+            container.appendChild(particle);
+        }
+    }
+
+    // ===== Maskottchen-Reaktionen =====
+    const mascotMoods = {
+        idle: '🦊',
+        happy: '🥳',
+        superHappy: '🤩',
+        thinking: '🤔',
+        sad: '😅',
+        fire: '🔥',
+        sleeping: '😴',
+        wave: '👋',
+        celebrate: '🎉',
+        star: '🌟',
+        rocket: '🚀'
+    };
+
+    function setMascot(mood, el) {
+        const target = el || els.mascot;
+        if (!target) return;
+        target.textContent = mascotMoods[mood] || mascotMoods.idle;
+        target.classList.remove('mascot-bounce', 'mascot-spin', 'mascot-shake');
+        void target.offsetWidth;
+        if (mood === 'happy' || mood === 'superHappy') {
+            target.classList.add('mascot-bounce');
+        } else if (mood === 'fire' || mood === 'celebrate') {
+            target.classList.add('mascot-spin');
+        } else if (mood === 'sad') {
+            target.classList.add('mascot-shake');
+        }
+    }
+
+    // ===== Mini-Partikel bei richtiger Antwort =====
+    function spawnMiniParticles(emoji, count) {
+        const gameArea = document.querySelector('.game-area');
+        if (!gameArea) return;
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'mini-particle';
+            p.textContent = emoji;
+            p.style.left = (30 + Math.random() * 40) + '%';
+            p.style.animationDuration = (0.6 + Math.random() * 0.8) + 's';
+            p.style.setProperty('--dx', (Math.random() - 0.5) * 120 + 'px');
+            gameArea.appendChild(p);
+            setTimeout(() => p.remove(), 1500);
+        }
+    }
 
     // ===== Screen Navigation =====
     function showScreen(name) {
@@ -75,6 +147,7 @@ const App = (() => {
         const name = els.playerName.value.trim();
         if (!name) return;
         Storage.setPlayerName(name);
+        Sounds.welcome(name);
         showLevelScreen(name);
     }
 
@@ -112,17 +185,56 @@ const App = (() => {
 
         document.querySelector('[data-level="1"]').addEventListener('click', () => {
             Sounds.click();
-            startGame(1);
+            startGameWithCountdown(1);
         });
     }
 
-    // ===== Spiel =====
-    function startGame(level) {
+    // ===== Countdown =====
+    function startGameWithCountdown(level) {
         Game.startRound(level);
+        currentStreak = 0;
         showScreen('game');
-        nextTask();
+        setMascot('thinking');
+        updateStreakDisplay();
+
+        if (!els.countdownOverlay) {
+            nextTask();
+            return;
+        }
+
+        els.countdownOverlay.classList.remove('hidden');
+        els.answerInput.disabled = true;
+        els.btnCheck.disabled = true;
+
+        let count = 3;
+        els.countdownNumber.textContent = count;
+        els.countdownNumber.className = 'countdown-num countdown-pop';
+        Sounds.countdown(count);
+
+        const interval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                els.countdownNumber.textContent = count;
+                els.countdownNumber.className = 'countdown-num';
+                void els.countdownNumber.offsetWidth;
+                els.countdownNumber.className = 'countdown-num countdown-pop';
+                Sounds.countdown(count);
+            } else if (count === 0) {
+                els.countdownNumber.textContent = 'Los!';
+                els.countdownNumber.className = 'countdown-num countdown-pop countdown-go';
+                Sounds.countdown(0);
+            } else {
+                clearInterval(interval);
+                els.countdownOverlay.classList.add('hidden');
+                els.answerInput.disabled = false;
+                els.btnCheck.disabled = false;
+                setMascot('idle');
+                nextTask();
+            }
+        }, 800);
     }
 
+    // ===== Spiel =====
     function nextTask() {
         const task = Game.generateTask();
         const progress = Game.getProgress();
@@ -134,10 +246,11 @@ const App = (() => {
         els.answerInput.value = '';
         els.answerInput.focus();
         els.feedback.classList.add('hidden');
+        isProcessing = false;
 
         updateProgress(progress);
-        els.taskDisplay.classList.remove('shake', 'pop');
-        void els.taskDisplay.offsetWidth; // reflow
+        els.taskDisplay.classList.remove('shake', 'pop', 'task-correct', 'task-wrong');
+        void els.taskDisplay.offsetWidth;
         els.taskDisplay.classList.add('pop');
     }
 
@@ -148,44 +261,79 @@ const App = (() => {
         els.gameScore.textContent = '✅ ' + progress.score;
     }
 
+    function updateStreakDisplay() {
+        if (!els.streakDisplay) return;
+        if (currentStreak >= 3) {
+            els.streakDisplay.classList.remove('hidden');
+            els.streakDisplay.textContent = '🔥 ' + currentStreak + 'x Streak!';
+            els.streakDisplay.classList.remove('streak-pop');
+            void els.streakDisplay.offsetWidth;
+            els.streakDisplay.classList.add('streak-pop');
+        } else {
+            els.streakDisplay.classList.add('hidden');
+        }
+    }
+
     function handleAnswer() {
+        if (isProcessing) return;
         const value = els.answerInput.value.trim();
         if (value === '') return;
+        isProcessing = true;
 
         const result = Game.checkAnswer(value);
 
-        // Feedback anzeigen
         if (feedbackTimeout) clearTimeout(feedbackTimeout);
         els.feedback.classList.remove('hidden', 'correct', 'wrong');
+        els.taskDisplay.classList.remove('task-correct', 'task-wrong');
 
         if (result.isCorrect) {
+            currentStreak++;
             els.feedback.classList.add('correct');
             els.feedback.textContent = randomPraise();
-            Sounds.correct();
+            els.taskDisplay.classList.add('task-correct');
+
+            if (currentStreak >= 5) {
+                setMascot('fire');
+                Sounds.streak(currentStreak);
+                spawnMiniParticles('🔥', 8);
+            } else if (currentStreak >= 3) {
+                setMascot('superHappy');
+                Sounds.streak(currentStreak);
+                spawnMiniParticles('⭐', 5);
+            } else {
+                setMascot('happy');
+                Sounds.correct();
+                spawnMiniParticles('✨', 3);
+            }
+            updateStreakDisplay();
         } else {
+            currentStreak = 0;
             els.feedback.classList.add('wrong');
             els.feedback.textContent = 'Die Antwort ist ' + result.correctAnswer + '!';
-            els.taskDisplay.classList.add('shake');
-            Sounds.wrong();
+            els.taskDisplay.classList.add('task-wrong');
+            setMascot('sad');
+            Sounds.wrong(result.correctAnswer);
+            updateStreakDisplay();
         }
 
         if (result.isRoundOver) {
-            // Kurz warten, dann Ergebnis zeigen
             setTimeout(() => {
-                Sounds.roundComplete();
+                Sounds.roundComplete(result.score, result.totalTasks);
                 showResult(result.score);
-            }, 1200);
+            }, 1500);
         } else {
             feedbackTimeout = setTimeout(() => {
+                setMascot('idle');
                 nextTask();
-            }, 1000);
+            }, 1200);
         }
     }
 
     function randomPraise() {
         const praises = [
             'Super! 🎉', 'Richtig! ✨', 'Genau! 👏', 'Toll! 🌟',
-            'Perfekt! 💪', 'Klasse! 🏆', 'Wow! 🚀', 'Spitze! ⭐'
+            'Perfekt! 💪', 'Klasse! 🏆', 'Wow! 🚀', 'Spitze! ⭐',
+            'Mega! 💥', 'Bingo! 🎯', 'Yeah! 🙌', 'Top! 🏅'
         ];
         return praises[Math.floor(Math.random() * praises.length)];
     }
@@ -210,17 +358,22 @@ const App = (() => {
         if (pct >= 1) {
             els.resultTitle.textContent = 'Perfekt! 🏆';
             els.resultMessage.textContent = 'Alle richtig – du bist ein Mathe-Genie!';
+            if (els.resultMascot) els.resultMascot.textContent = '🤩';
             launchConfetti();
+            launchConfetti(); // doppelt für extra Effekt
         } else if (pct >= 0.8) {
             els.resultTitle.textContent = 'Großartig! 🎉';
             els.resultMessage.textContent = 'Fast alles richtig – super gemacht!';
+            if (els.resultMascot) els.resultMascot.textContent = '🥳';
             launchConfetti();
         } else if (pct >= 0.5) {
             els.resultTitle.textContent = 'Gut gemacht! 👍';
             els.resultMessage.textContent = 'Übe weiter, du wirst immer besser!';
+            if (els.resultMascot) els.resultMascot.textContent = '😊';
         } else {
             els.resultTitle.textContent = 'Weiter üben! 💪';
             els.resultMessage.textContent = 'Übung macht den Meister – versuch es nochmal!';
+            if (els.resultMascot) els.resultMascot.textContent = '🦊';
         }
 
         els.jokeText.textContent = Jokes.getRandom();
@@ -230,7 +383,7 @@ const App = (() => {
     function initResult() {
         els.btnRetry.addEventListener('click', () => {
             Sounds.click();
-            startGame(1);
+            startGameWithCountdown(1);
         });
         els.btnBackLevels.addEventListener('click', () => {
             Sounds.click();
@@ -246,23 +399,25 @@ const App = (() => {
         canvas.height = window.innerHeight;
 
         const pieces = [];
-        const colors = ['#6C63FF', '#FF5252', '#4CAF50', '#FF9800', '#E91E63', '#00BCD4'];
+        const colors = ['#6C63FF', '#FF5252', '#4CAF50', '#FF9800', '#E91E63', '#00BCD4', '#FFD700', '#FF69B4'];
 
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 150; i++) {
             pieces.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height - canvas.height,
-                w: Math.random() * 10 + 5,
-                h: Math.random() * 6 + 3,
+                w: Math.random() * 12 + 4,
+                h: Math.random() * 8 + 3,
                 color: colors[Math.floor(Math.random() * colors.length)],
-                speed: Math.random() * 3 + 2,
+                speed: Math.random() * 4 + 2,
                 angle: Math.random() * Math.PI * 2,
-                spin: (Math.random() - 0.5) * 0.2
+                spin: (Math.random() - 0.5) * 0.3,
+                wobble: Math.random() * Math.PI * 2,
+                wobbleSpeed: Math.random() * 0.1 + 0.03
             });
         }
 
         let frame = 0;
-        const maxFrames = 180;
+        const maxFrames = 200;
 
         function animate() {
             if (frame >= maxFrames) {
@@ -273,9 +428,12 @@ const App = (() => {
             pieces.forEach(p => {
                 p.y += p.speed;
                 p.angle += p.spin;
+                p.wobble += p.wobbleSpeed;
+                p.x += Math.sin(p.wobble) * 1.5;
                 ctx.save();
                 ctx.translate(p.x, p.y);
                 ctx.rotate(p.angle);
+                ctx.globalAlpha = frame > maxFrames - 30 ? (maxFrames - frame) / 30 : 1;
                 ctx.fillStyle = p.color;
                 ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
                 ctx.restore();
@@ -289,18 +447,17 @@ const App = (() => {
 
     // ===== Init =====
     function init() {
+        initBgParticles();
         initWelcome();
         initLevels();
         initGame();
         initResult();
 
-        // Auto-Login wenn Name gespeichert
         const savedName = Storage.getPlayerName();
         if (savedName) {
             showLevelScreen(savedName);
         }
     }
 
-    // App starten
     init();
 })();
