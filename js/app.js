@@ -1,6 +1,6 @@
 /**
- * MatheCheck - Haupt-App-Logik (Verspielt-Edition).
- * Maskottchen, Streaks, Countdown, Partikel, Sprachausgabe.
+ * MatheCheck - Haupt-App-Logik (Mario-Edition).
+ * Mario läuft von Block zu Block, springt hoch und sammelt Münzen.
  */
 const App = (() => {
     const screens = {
@@ -25,10 +25,7 @@ const App = (() => {
         answerDisplay: document.getElementById('answer-display'),
         numpad: document.querySelector('.numpad'),
         feedback: document.getElementById('feedback'),
-        progressFill: document.getElementById('progress-fill'),
-        progressText: document.getElementById('progress-text'),
         gameScore: document.getElementById('game-score'),
-        mascot: document.getElementById('game-mascot'),
         streakDisplay: document.getElementById('streak-display'),
         countdownOverlay: document.getElementById('countdown-overlay'),
         countdownNumber: document.getElementById('countdown-number'),
@@ -41,13 +38,20 @@ const App = (() => {
         btnRetry: document.getElementById('btn-retry'),
         btnBackLevels: document.getElementById('btn-back-levels'),
         confettiCanvas: document.getElementById('confetti-canvas'),
-        bgParticles: document.getElementById('bg-particles')
+        bgParticles: document.getElementById('bg-particles'),
+        // Mario-Welt
+        marioWorld: document.getElementById('mario-world'),
+        marioScene: document.getElementById('mario-scene'),
+        marioBlocks: document.getElementById('mario-blocks'),
+        marioChar: document.getElementById('mario-char')
     };
 
     let feedbackTimeout = null;
     let currentStreak = 0;
     let isProcessing = false;
     let currentAnswer = '';
+    let marioBlockEls = [];
+    let currentBlockIndex = 0;
 
     // ===== Numpad Antwort-Verwaltung =====
     function setAnswer(val) {
@@ -58,7 +62,7 @@ const App = (() => {
 
     function appendDigit(digit) {
         if (isProcessing) return;
-        if (currentAnswer.length >= 3) return; // Max 3 Stellen (Addition bis 20)
+        if (currentAnswer.length >= 3) return;
         setAnswer(currentAnswer + digit);
     }
 
@@ -86,7 +90,114 @@ const App = (() => {
         }
     }
 
-    // ===== Maskottchen-Reaktionen =====
+    // ===== Mario-Welt =====
+    const BLOCK_WIDTH = 44;  // Breite eines Blocks inkl. Abstand
+    const BLOCK_GAP = 12;
+    const BLOCK_TOTAL = BLOCK_WIDTH + BLOCK_GAP;
+
+    function initMarioWorld() {
+        if (!els.marioBlocks) return;
+        els.marioBlocks.innerHTML = '';
+        marioBlockEls = [];
+        currentBlockIndex = 0;
+
+        const totalTasks = Game.getTotalTasks();
+
+        for (let i = 0; i < totalTasks; i++) {
+            const block = document.createElement('div');
+            block.className = 'mario-block mario-block-pending';
+            block.textContent = '?';
+            els.marioBlocks.appendChild(block);
+            marioBlockEls.push(block);
+        }
+
+        // Breite des Block-Containers setzen
+        els.marioBlocks.style.width = (totalTasks * BLOCK_TOTAL + 60) + 'px';
+
+        // Mario an den Anfang setzen
+        moveMarioTo(0, false);
+    }
+
+    function moveMarioTo(blockIndex, animate) {
+        if (!els.marioChar) return;
+        const x = blockIndex * BLOCK_TOTAL + BLOCK_WIDTH / 2 - 16;
+        if (animate) {
+            els.marioChar.style.transition = 'left 0.4s ease-out';
+        } else {
+            els.marioChar.style.transition = 'none';
+        }
+        els.marioChar.style.left = x + 'px';
+
+        // Szene scrollen, damit Mario sichtbar bleibt
+        scrollSceneTo(blockIndex);
+    }
+
+    function scrollSceneTo(blockIndex) {
+        if (!els.marioScene) return;
+        const sceneWidth = els.marioScene.offsetWidth;
+        const targetX = blockIndex * BLOCK_TOTAL;
+        // Mario soll im linken Drittel bleiben
+        const scrollPos = Math.max(0, targetX - sceneWidth * 0.3);
+        els.marioScene.scrollLeft = scrollPos;
+    }
+
+    function marioJump(blockIndex, isCorrect) {
+        const block = marioBlockEls[blockIndex];
+        if (!block) return;
+
+        // Block aktivieren (leuchtet auf)
+        block.classList.add('mario-block-active');
+
+        // Mario springt
+        if (els.marioChar) {
+            els.marioChar.classList.remove('jumping', 'stumble', 'star-power');
+            void els.marioChar.offsetWidth;
+            els.marioChar.classList.add('jumping');
+            setTimeout(() => els.marioChar.classList.remove('jumping'), 500);
+        }
+
+        // Block-Hit Animation
+        setTimeout(() => {
+            block.classList.remove('mario-block-active');
+            if (isCorrect) {
+                block.classList.remove('mario-block-pending');
+                block.classList.add('mario-block-correct');
+                block.textContent = '✓';
+                spawnCoin(block);
+            } else {
+                block.classList.remove('mario-block-pending');
+                block.classList.add('mario-block-wrong');
+                block.textContent = '✗';
+            }
+        }, 250);
+    }
+
+    function marioStumble() {
+        if (!els.marioChar) return;
+        els.marioChar.classList.remove('jumping', 'stumble');
+        void els.marioChar.offsetWidth;
+        els.marioChar.classList.add('stumble');
+        setTimeout(() => els.marioChar.classList.remove('stumble'), 500);
+    }
+
+    function marioStarPower() {
+        if (!els.marioChar) return;
+        els.marioChar.classList.add('star-power');
+        setTimeout(() => els.marioChar.classList.remove('star-power'), 2000);
+    }
+
+    function spawnCoin(block) {
+        const coin = document.createElement('div');
+        coin.className = 'mario-coin';
+        coin.textContent = '🪙';
+        // Position relativ zum Block
+        coin.style.left = block.offsetLeft + BLOCK_WIDTH / 2 - 10 + 'px';
+        coin.style.bottom = '60px';
+        els.marioBlocks.parentElement.appendChild(coin);
+        setTimeout(() => coin.remove(), 800);
+    }
+
+    // ===== Maskottchen (nur für Result-Screen) =====
     const mascotMoods = {
         idle: '🦊',
         happy: '🥳',
@@ -102,18 +213,9 @@ const App = (() => {
     };
 
     function setMascot(mood, el) {
-        const target = el || els.mascot;
+        const target = el || els.resultMascot;
         if (!target) return;
         target.textContent = mascotMoods[mood] || mascotMoods.idle;
-        target.classList.remove('mascot-bounce', 'mascot-spin', 'mascot-shake');
-        void target.offsetWidth;
-        if (mood === 'happy' || mood === 'superHappy') {
-            target.classList.add('mascot-bounce');
-        } else if (mood === 'fire' || mood === 'celebrate') {
-            target.classList.add('mascot-spin');
-        } else if (mood === 'sad') {
-            target.classList.add('mascot-shake');
-        }
     }
 
     // ===== Mini-Partikel bei richtiger Antwort =====
@@ -212,8 +314,10 @@ const App = (() => {
         Game.startRound(level);
         currentStreak = 0;
         showScreen('game');
-        setMascot('thinking');
         updateStreakDisplay();
+
+        // Mario-Welt initialisieren
+        initMarioWorld();
 
         if (!els.countdownOverlay) {
             nextTask();
@@ -244,7 +348,6 @@ const App = (() => {
                 clearInterval(interval);
                 els.countdownOverlay.classList.add('hidden');
                 isProcessing = false;
-                setMascot('idle');
                 nextTask();
             }
         }, 800);
@@ -263,17 +366,19 @@ const App = (() => {
         els.feedback.classList.add('hidden');
         isProcessing = false;
 
-        updateProgress(progress);
+        // Mario zum nächsten Block bewegen
+        currentBlockIndex = progress.currentTask;
+        moveMarioTo(currentBlockIndex, progress.currentTask > 0);
+
+        // Aktuellen Block hervorheben
+        if (marioBlockEls[currentBlockIndex]) {
+            marioBlockEls[currentBlockIndex].classList.add('mario-block-active');
+        }
+
+        els.gameScore.textContent = '✅ ' + progress.score;
         els.taskDisplay.classList.remove('shake', 'pop', 'task-correct', 'task-wrong');
         void els.taskDisplay.offsetWidth;
         els.taskDisplay.classList.add('pop');
-    }
-
-    function updateProgress(progress) {
-        const pct = (progress.currentTask / progress.totalTasks) * 100;
-        els.progressFill.style.width = pct + '%';
-        els.progressText.textContent = (progress.currentTask + 1) + ' / ' + progress.totalTasks;
-        els.gameScore.textContent = '✅ ' + progress.score;
     }
 
     function updateStreakDisplay() {
@@ -306,16 +411,17 @@ const App = (() => {
             els.feedback.textContent = randomPraise();
             els.taskDisplay.classList.add('task-correct');
 
+            // Mario springt und trifft den Block
+            marioJump(currentBlockIndex, true);
+
             if (currentStreak >= 5) {
-                setMascot('fire');
-                Sounds.streak(currentStreak);
+                marioStarPower();
+                Sounds.streak();
                 spawnMiniParticles('🔥', 8);
             } else if (currentStreak >= 3) {
-                setMascot('superHappy');
-                Sounds.streak(currentStreak);
+                Sounds.streak();
                 spawnMiniParticles('⭐', 5);
             } else {
-                setMascot('happy');
                 Sounds.correct();
                 spawnMiniParticles('✨', 3);
             }
@@ -325,19 +431,25 @@ const App = (() => {
             els.feedback.classList.add('wrong');
             els.feedback.textContent = 'Die Antwort ist ' + result.correctAnswer + '!';
             els.taskDisplay.classList.add('task-wrong');
-            setMascot('sad');
+
+            // Mario stolpert, Block wird rot
+            marioJump(currentBlockIndex, false);
+            marioStumble();
             Sounds.wrong();
             updateStreakDisplay();
         }
 
         if (result.isRoundOver) {
             setTimeout(() => {
-                Sounds.roundComplete();
-                showResult(result.score);
-            }, 1500);
+                // Mario läuft zum Schloss
+                moveMarioTo(Game.getTotalTasks(), true);
+                setTimeout(() => {
+                    Sounds.roundComplete();
+                    showResult(result.score);
+                }, 600);
+            }, 1200);
         } else {
             feedbackTimeout = setTimeout(() => {
-                setMascot('idle');
                 nextTask();
             }, 1200);
         }
@@ -394,22 +506,22 @@ const App = (() => {
         if (pct >= 1) {
             els.resultTitle.textContent = 'Perfekt! 🏆';
             els.resultMessage.textContent = 'Alle richtig – du bist ein Mathe-Genie!';
-            if (els.resultMascot) els.resultMascot.textContent = '🤩';
+            setMascot('superHappy');
             launchConfetti();
-            launchConfetti(); // doppelt für extra Effekt
+            launchConfetti();
         } else if (pct >= 0.8) {
             els.resultTitle.textContent = 'Großartig! 🎉';
             els.resultMessage.textContent = 'Fast alles richtig – super gemacht!';
-            if (els.resultMascot) els.resultMascot.textContent = '🥳';
+            setMascot('happy');
             launchConfetti();
         } else if (pct >= 0.5) {
             els.resultTitle.textContent = 'Gut gemacht! 👍';
             els.resultMessage.textContent = 'Übe weiter, du wirst immer besser!';
-            if (els.resultMascot) els.resultMascot.textContent = '😊';
+            setMascot('idle');
         } else {
             els.resultTitle.textContent = 'Weiter üben! 💪';
             els.resultMessage.textContent = 'Übung macht den Meister – versuch es nochmal!';
-            if (els.resultMascot) els.resultMascot.textContent = '🦊';
+            setMascot('idle');
         }
 
         els.jokeText.textContent = Jokes.getRandom();
