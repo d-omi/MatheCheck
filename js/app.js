@@ -17,6 +17,7 @@ const App = (() => {
         btnLogout: document.getElementById('btn-logout'),
         displayName: document.getElementById('display-name'),
         starsLevel1: document.getElementById('stars-level-1'),
+        starsLevel2: document.getElementById('stars-level-2'),
         statRounds: document.getElementById('stat-rounds'),
         statBest: document.getElementById('stat-best'),
         taskNum1: document.getElementById('task-num1'),
@@ -52,6 +53,7 @@ const App = (() => {
     let currentAnswer = '';
     let currentBlockIndex = 0;
     let charPos = 0;
+    let currentLevel = 1;
 
     // ===== Welt-Konstanten =====
     const BLOCK_SPACING = 120;
@@ -354,10 +356,14 @@ const App = (() => {
     }
 
     function updateStats() {
-        var stats = Storage.getLevelStats(1);
-        els.statRounds.textContent = stats.roundsPlayed;
-        els.statBest.textContent = stats.bestScore + ' / ' + Game.getTotalTasks();
-        els.starsLevel1.textContent = getStarsForScore(stats.bestScore);
+        var stats1 = Storage.getLevelStats(1);
+        var stats2 = Storage.getLevelStats(2);
+        var totalRounds = stats1.roundsPlayed + stats2.roundsPlayed;
+        var bestScore = Math.max(stats1.bestScore, stats2.bestScore);
+        els.statRounds.textContent = totalRounds;
+        els.statBest.textContent = bestScore + ' / ' + Game.getTotalTasks();
+        els.starsLevel1.textContent = getStarsForScore(stats1.bestScore);
+        if (els.starsLevel2) els.starsLevel2.textContent = getStarsForScore(stats2.bestScore);
     }
 
     function getStarsForScore(score) {
@@ -382,11 +388,17 @@ const App = (() => {
             Sounds.click();
             startGameWithCountdown(1);
         });
+
+        document.querySelector('[data-level="2"]').addEventListener('click', function() {
+            Sounds.click();
+            startGameWithCountdown(2);
+        });
     }
 
     // ===== Countdown =====
     function startGameWithCountdown(level) {
         Game.startRound(level);
+        currentLevel = level;
         currentStreak = 0;
         currentBlockIndex = 0;
         showScreen('game');
@@ -592,7 +604,7 @@ const App = (() => {
         var total = Game.getTotalTasks();
         var pct = score / total;
 
-        Storage.saveRoundResult(1, score);
+        Storage.saveRoundResult(currentLevel, score);
 
         els.resultScore.textContent = score;
         els.resultStars.textContent = getStarsForScore(score);
@@ -625,7 +637,7 @@ const App = (() => {
     function initResult() {
         els.btnRetry.addEventListener('click', function() {
             Sounds.click();
-            startGameWithCountdown(1);
+            startGameWithCountdown(currentLevel);
         });
         els.btnBackLevels.addEventListener('click', function() {
             Sounds.click();

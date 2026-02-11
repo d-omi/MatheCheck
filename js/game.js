@@ -13,13 +13,21 @@ const Game = (() => {
 
     /** Erzeugt eine neue Aufgabe basierend auf dem Level. */
     function generateTask() {
+        let op = '+';
         if (currentLevel === 1) {
             // Addition bis 20
             num1 = Math.floor(Math.random() * 20) + 1;
             num2 = Math.floor(Math.random() * (20 - num1)) + 1;
             correctAnswer = num1 + num2;
+            op = '+';
+        } else if (currentLevel === 2) {
+            // Subtraktion bis 10 (Ergebnis immer >= 0)
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * num1) + 1;
+            correctAnswer = num1 - num2;
+            op = '−';
         }
-        return { num1, num2, op: '+', answer: correctAnswer };
+        return { num1, num2, op, answer: correctAnswer };
     }
 
     /** Startet eine neue Runde. */
