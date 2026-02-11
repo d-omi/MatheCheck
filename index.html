@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MatheCheck - Mathe-Spaß für Kinder!</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -69,29 +69,32 @@
 
     <!-- Spiel-Screen -->
     <div id="screen-game" class="screen">
-        <div class="container">
-            <div class="game-header">
-                <div class="game-info">
-                    <span id="game-level">Level 1</span>
-                    <span id="game-score">✅ 0</span>
-                </div>
-                <div id="streak-display" class="streak-display hidden"></div>
+        <div class="container game-container">
+            <!-- HUD -->
+            <div class="game-hud">
+                <span class="hud-level" id="game-level">LEVEL 1</span>
+                <span class="hud-score" id="game-score">⭐ 0</span>
             </div>
 
-            <!-- Mario Welt -->
-            <div class="mario-world" id="mario-world">
-                <div class="mario-sky">
-                    <div class="mario-cloud" style="left:10%;top:5px">☁️</div>
-                    <div class="mario-cloud" style="left:45%;top:12px">☁️</div>
-                    <div class="mario-cloud" style="left:80%;top:3px">☁️</div>
+            <!-- Fortschritt -->
+            <div class="hud-progress">
+                <div class="hud-progress-bar">
+                    <div class="hud-progress-fill" id="progress-fill"></div>
                 </div>
-                <div class="mario-scene" id="mario-scene">
-                    <div class="mario-blocks" id="mario-blocks"></div>
-                    <div class="mario-char" id="mario-char">🏃</div>
-                    <div class="mario-castle">🏰</div>
-                </div>
-                <div class="mario-ground"></div>
+                <span class="hud-progress-text" id="progress-text">0/30</span>
             </div>
+
+            <!-- Spielwelt Viewport -->
+            <div class="game-viewport" id="game-viewport">
+                <div class="game-world" id="game-world">
+                    <!-- Wird dynamisch generiert -->
+                </div>
+            </div>
+
+            <!-- Streak -->
+            <div id="streak-display" class="streak-display hidden"></div>
+
+            <!-- Aufgabe + Antwort -->
             <div class="game-area">
                 <div class="task-display" id="task-display">
                     <span id="task-num1">5</span>
