@@ -56,7 +56,7 @@ const App = (() => {
     let currentLevel = 1;
 
     // ===== Welt-Konstanten =====
-    const BLOCK_SPACING = 120;
+    const BLOCK_SPACING = 80;
     const WORLD_PADDING_LEFT = 80;
     const WORLD_PADDING_RIGHT = 160;
     const VIEWPORT_WIDTH = 500;
