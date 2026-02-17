@@ -756,91 +756,209 @@ body {
     animation: coin-fly 0.7s ease-out forwards;
 }
 
-/* ===== Charakter (Pixel-Art via CSS) ===== */
+/* ===== Charakter (Mario Pixel-Art via CSS) ===== */
 .character {
     position: absolute;
     bottom: 50px;
-    width: 34px;
-    height: 44px;
+    width: 36px;
+    height: 52px;
     transition: left 0.6s cubic-bezier(.25,.46,.45,.94);
     z-index: 10;
 }
 
 .char-body {
     position: relative;
-    width: 34px;
-    height: 44px;
+    width: 36px;
+    height: 52px;
 }
 
-/* Mütze */
+/* Mütze – Oberteil */
 .char-cap {
     position: absolute;
-    top: -2px;
-    left: 2px;
-    width: 30px;
-    height: 12px;
+    top: 0;
+    left: 4px;
+    width: 28px;
+    height: 10px;
     background: #e53935;
-    border-radius: 8px 8px 2px 2px;
-    border: 2px solid #b71c1c;
+    border-radius: 10px 10px 0 0;
 }
 
-.char-cap::after {
+/* Mützenschild */
+.char-cap::before {
     content: '';
     position: absolute;
-    top: 8px;
-    left: -2px;
-    width: 34px;
+    bottom: -4px;
+    left: -4px;
+    width: 36px;
     height: 6px;
     background: #e53935;
     border-radius: 2px;
-    border: 2px solid #b71c1c;
 }
 
-/* Kopf */
-.char-head {
+/* "M" auf der Mütze */
+.char-cap::after {
+    content: 'M';
     position: absolute;
     top: 0;
-    left: 5px;
-    width: 24px;
-    height: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 900;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    line-height: 10px;
+    text-shadow: 0 0 1px #b71c1c;
+}
+
+/* Kopf / Gesicht */
+.char-head {
+    position: absolute;
+    top: 12px;
+    left: 4px;
+    width: 28px;
+    height: 16px;
     background: #ffcc80;
-    border-radius: 6px 6px 4px 4px;
-    border: 2px solid #e0a050;
+    border-radius: 4px 4px 6px 6px;
+}
+
+/* Haare (seitlich unter Mütze) */
+.char-head::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 8px;
+    background: #5d4037;
+    border-radius: 0 0 0 4px;
+}
+
+/* Schnurrbart */
+.char-head::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 6px;
+    width: 18px;
+    height: 4px;
+    background: #5d4037;
+    border-radius: 0 0 6px 6px;
 }
 
 /* Auge */
 .char-eye {
     position: absolute;
-    top: 8px;
-    left: 16px;
+    top: 16px;
+    left: 20px;
     width: 5px;
     height: 5px;
-    background: #333;
+    background: #222;
     border-radius: 50%;
 }
 
-/* Hemd */
-.char-shirt {
+/* Nase */
+.char-eye::after {
+    content: '';
     position: absolute;
-    top: 18px;
-    left: 5px;
-    width: 24px;
-    height: 14px;
-    background: #e53935;
-    border-radius: 2px;
-    border: 2px solid #b71c1c;
+    top: 3px;
+    left: -4px;
+    width: 7px;
+    height: 5px;
+    background: #ffb74d;
+    border-radius: 50%;
 }
 
-/* Beine */
+/* Hemd (rot, unter Latzhose sichtbar) */
+.char-shirt {
+    position: absolute;
+    top: 27px;
+    left: 2px;
+    width: 32px;
+    height: 10px;
+    background: #e53935;
+    border-radius: 2px;
+}
+
+/* Arme (rot, seitlich) */
+.char-shirt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 5px;
+    height: 10px;
+    background: #e53935;
+    border-radius: 3px 0 0 3px;
+}
+
+.char-shirt::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: 5px;
+    height: 10px;
+    background: #e53935;
+    border-radius: 0 3px 3px 0;
+}
+
+/* Latzhose (blau) */
 .char-legs {
     position: absolute;
-    top: 30px;
-    left: 7px;
-    width: 20px;
-    height: 14px;
+    top: 34px;
+    left: 4px;
+    width: 28px;
+    height: 12px;
     background: #1565c0;
-    border-radius: 0 0 4px 4px;
-    border: 2px solid #0d47a1;
+    border-radius: 2px;
+}
+
+/* Hosenträger / Knöpfe */
+.char-legs::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 4px;
+    width: 4px;
+    height: 6px;
+    background: #1565c0;
+    border-radius: 2px;
+    box-shadow: 16px 0 0 #1565c0;
+}
+
+/* Goldene Knöpfe */
+.char-legs::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 4px;
+    width: 4px;
+    height: 4px;
+    background: #ffd700;
+    border-radius: 50%;
+    box-shadow: 16px 0 0 #ffd700;
+}
+
+/* Schuhe (braun) */
+.char-shoes {
+    position: absolute;
+    top: 45px;
+    left: 2px;
+    width: 14px;
+    height: 7px;
+    background: #5d4037;
+    border-radius: 6px 2px 4px 6px;
+}
+
+.char-shoes::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    width: 14px;
+    height: 7px;
+    background: #5d4037;
+    border-radius: 2px 6px 6px 4px;
 }
 
 /* Lauf-Animation */
