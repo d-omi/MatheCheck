@@ -191,6 +191,7 @@ const App = (() => {
         html += '<div class="char-head"><div class="char-eye"></div></div>';
         html += '<div class="char-shirt"></div>';
         html += '<div class="char-legs"></div>';
+        html += '<div class="char-shoes"></div>';
         html += '</div></div>';
 
         return { html: html, worldWidth: worldW };
