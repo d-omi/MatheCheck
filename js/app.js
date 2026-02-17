@@ -44,7 +44,8 @@ const App = (() => {
         confettiCanvas: document.getElementById('confetti-canvas'),
         bgParticles: document.getElementById('bg-particles'),
         gameViewport: document.getElementById('game-viewport'),
-        gameWorld: document.getElementById('game-world')
+        gameWorld: document.getElementById('game-world'),
+        btnGameBack: document.getElementById('btn-game-back')
     };
 
     let feedbackTimeout = null;
@@ -572,6 +573,14 @@ const App = (() => {
     }
 
     function initGame() {
+        // Zurück-Button: zurück zur Level-Auswahl
+        if (els.btnGameBack) {
+            els.btnGameBack.addEventListener('click', function() {
+                Sounds.click();
+                showLevelScreen(Storage.getPlayerName());
+            });
+        }
+
         // Numpad: Ziffern, Löschen, Absenden
         els.numpad.addEventListener('click', function(e) {
             var btn = e.target.closest('.numpad-btn');
