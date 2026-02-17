@@ -22,16 +22,26 @@ const Game = (() => {
         return arr;
     }
 
-    /** Erzeugt einen Pool aller möglichen Aufgaben für das Level. */
+    /** Feste Aufgabenliste für Level 1 (Addition bis 20). */
+    const LEVEL1_TASKS = [
+        [7,7],[2,1],[1,1],[5,2],[6,6],[0,4],[2,8],[7,3],[4,4],[0,1],
+        [4,1],[4,5],[5,5],[1,6],[0,9],[1,4],[8,1],[8,5],[5,7],[3,3],
+        [3,7],[6,5],[5,6],[3,1],[1,9],[5,9],[1,2],[5,8],[0,0],[9,5],
+        [1,0],[0,10],[10,10],[2,0],[10,0],[10,7],[3,5],[10,1],[1,7],[6,4],
+        [5,4],[10,3],[6,1],[8,8],[2,2],[1,8],[5,3],[1,5],[9,10],[6,10],
+        [5,1],[10,5],[7,0],[5,10],[8,2],[5,7],[1,10],[9,1],[8,10],[4,6],
+        [1,3],[5,0],[0,5],[2,5],[9,9],[7,1]
+    ];
+
+    /** Erzeugt einen Pool aller Aufgaben für das Level. */
     function buildPool(level) {
         const all = [];
 
         if (level === 1) {
-            // Alle Additionen a + b wo a,b >= 1 und a+b <= 20
-            for (let a = 1; a <= 19; a++) {
-                for (let b = 1; b <= 20 - a; b++) {
-                    all.push({ n1: a, n2: b, op: '+', ans: a + b });
-                }
+            // Feste 66 Additionen, jede Runde gemischt
+            for (let i = 0; i < LEVEL1_TASKS.length; i++) {
+                const t = LEVEL1_TASKS[i];
+                all.push({ n1: t[0], n2: t[1], op: '+', ans: t[0] + t[1] });
             }
         } else if (level === 2) {
             // Alle Subtraktionen a - b wo a 1..10, b 1..a (Ergebnis >= 0)
@@ -46,7 +56,6 @@ const Game = (() => {
         shuffle(all);
         const pool = [];
         while (pool.length < TASKS_PER_ROUND) {
-            // Pool erschöpft → nochmal mischen und anhängen
             if (pool.length > 0 && pool.length % all.length === 0) {
                 shuffle(all);
             }
