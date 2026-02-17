@@ -22,6 +22,22 @@
     --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.3);
     --radius: 20px;
     --radius-sm: 12px;
+
+    /* Mario-Welt Farben */
+    --sky-top: #6085ff;
+    --sky-bot: #9be0ff;
+    --ground-color: #8b5e3c;
+    --grass: #4caf50;
+    --grass-light: #66bb6a;
+    --block-yellow: #f5c542;
+    --block-dark: #c49520;
+    --coin: #ffd700;
+    --pipe-green: #43a047;
+    --pipe-dark: #2e7d32;
+    --hill-fg: #5cb85c;
+    --hill-bg: #4caf50;
+    --bush-fg: #43a047;
+    --bush-light: #4caf50;
 }
 
 body {
@@ -57,12 +73,8 @@ body {
         transform: translateY(0) rotate(0deg);
         opacity: 0;
     }
-    10% {
-        opacity: 0.2;
-    }
-    90% {
-        opacity: 0.2;
-    }
+    10% { opacity: 0.2; }
+    90% { opacity: 0.2; }
     100% {
         transform: translateY(-110vh) rotate(360deg);
         opacity: 0;
@@ -133,19 +145,9 @@ body {
     margin: 10px 0 20px;
 }
 
-.mascot-game {
-    font-size: 3rem;
-    transition: all 0.3s;
-}
-
 .mascot-result {
     font-size: 4rem;
     margin-bottom: 10px;
-}
-
-.game-mascot-row {
-    text-align: center;
-    margin-bottom: 5px;
 }
 
 .wiggle {
@@ -157,38 +159,6 @@ body {
     25% { transform: rotate(8deg) scale(1.05); }
     50% { transform: rotate(-5deg) scale(1); }
     75% { transform: rotate(5deg) scale(1.02); }
-}
-
-.mascot-bounce {
-    animation: mascotBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes mascotBounce {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.4); }
-    100% { transform: scale(1); }
-}
-
-.mascot-spin {
-    animation: mascotSpin 0.6s ease;
-}
-
-@keyframes mascotSpin {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.3) rotate(180deg); }
-    100% { transform: scale(1) rotate(360deg); }
-}
-
-.mascot-shake {
-    animation: mascotShake 0.5s ease;
-}
-
-@keyframes mascotShake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-8px) rotate(-5deg); }
-    40% { transform: translateX(8px) rotate(5deg); }
-    60% { transform: translateX(-5px) rotate(-3deg); }
-    80% { transform: translateX(5px) rotate(3deg); }
 }
 
 /* ===== Mini-Partikel bei richtiger Antwort ===== */
@@ -452,63 +422,86 @@ body {
     color: var(--text-light);
 }
 
-/* ===== Spiel Screen ===== */
-.game-header {
-    margin-bottom: 20px;
+/* ===== Spiel-Screen ===== */
+#screen-game {
+    background: #1a1a2e;
 }
 
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-weight: 700;
-    font-size: 1.1rem;
+#screen-game.active {
+    align-items: flex-start;
+    padding-top: 10px;
 }
 
-.progress-bar {
+.game-container {
     position: relative;
-    height: 30px;
-    background: #E0E0E0;
-    border-radius: 15px;
-    overflow: hidden;
+    padding: 0 4px;
 }
 
-.progress-fill {
+/* ===== Game HUD ===== */
+.game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.hud-score {
+    color: var(--coin);
+}
+
+.hud-level {
+    color: #fff;
+}
+
+/* Fortschrittsbalken unter HUD */
+.hud-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px 8px;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+}
+
+.hud-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hud-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), #9C8FFF, #FF6B9D);
-    background-size: 200% auto;
-    animation: progressShimmer 2s linear infinite;
-    border-radius: 15px;
-    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 5px;
+    transition: width 0.4s ease;
+    background: var(--coin);
     width: 0%;
 }
 
-@keyframes progressShimmer {
-    to { background-position: 200% center; }
-}
-
-.progress-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text);
+.hud-progress-text {
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: right;
 }
 
 /* ===== Streak Anzeige ===== */
 .streak-display {
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     font-weight: 800;
-    color: var(--warning);
-    margin-top: 8px;
-    padding: 6px 12px;
-    background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--warning);
+    color: var(--coin);
+    margin: 6px 0;
+    padding: 4px 12px;
+    font-family: 'Courier New', 'Consolas', monospace;
 }
 
 .streak-display.hidden {
@@ -525,26 +518,425 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ===== Spiel-Bereich ===== */
+/* ===== Spielwelt Viewport ===== */
+.game-viewport {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 3px solid #333;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bot) 70%, var(--sky-bot) 100%);
+}
+
+.game-world {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(.25,.46,.45,.94);
+    will-change: transform;
+}
+
+/* ===== Wolken ===== */
+.cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 50px;
+    opacity: 0.85;
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.cloud--1 {
+    width: 80px;
+    height: 28px;
+    top: 30px;
+}
+
+.cloud--1::before {
+    width: 40px;
+    height: 40px;
+    top: -20px;
+    left: 15px;
+}
+
+.cloud--1::after {
+    width: 30px;
+    height: 30px;
+    top: -12px;
+    left: 42px;
+}
+
+.cloud--2 {
+    width: 60px;
+    height: 22px;
+    top: 60px;
+}
+
+.cloud--2::before {
+    width: 32px;
+    height: 32px;
+    top: -16px;
+    left: 10px;
+}
+
+.cloud--2::after {
+    width: 24px;
+    height: 24px;
+    top: -10px;
+    left: 32px;
+}
+
+/* ===== Hügel ===== */
+.hill {
+    position: absolute;
+    bottom: 50px;
+    border-radius: 50% 50% 0 0;
+    background: var(--hill-fg);
+}
+
+.hill--bg {
+    background: var(--hill-bg);
+    opacity: 0.6;
+}
+
+/* ===== Boden ===== */
+.ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 50px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--ground-color) 0px,
+        var(--ground-color) 30px,
+        #7a5230 30px,
+        #7a5230 32px
+    );
+}
+
+.ground::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 14px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--grass) 0px,
+        var(--grass-light) 15px,
+        var(--grass) 30px
+    );
+    border-top: 3px solid #388e3c;
+}
+
+/* ===== Büsche ===== */
+.bush {
+    position: absolute;
+    bottom: 48px;
+    width: 50px;
+    height: 26px;
+    background: var(--bush-fg);
+    border-radius: 50% 50% 10% 10%;
+}
+
+.bush::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: var(--bush-light);
+    border-radius: 50%;
+    top: -8px;
+    left: 10px;
+}
+
+/* ===== Rohre ===== */
+.pipe {
+    position: absolute;
+    bottom: 50px;
+    width: 48px;
+    background: var(--pipe-green);
+    border: 3px solid var(--pipe-dark);
+    border-bottom: none;
+}
+
+.pipe::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -6px;
+    width: 60px;
+    height: 16px;
+    background: var(--pipe-green);
+    border: 3px solid var(--pipe-dark);
+    border-radius: 4px 4px 0 0;
+}
+
+/* ===== Frageblöcke ===== */
+.q-block {
+    position: absolute;
+    bottom: 140px;
+    width: 40px;
+    height: 40px;
+    background: var(--block-yellow);
+    border: 3px solid var(--block-dark);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 1px 1px 0 var(--block-dark);
+    transition: transform 0.15s, background 0.3s, border-color 0.3s;
+    image-rendering: pixelated;
+}
+
+.q-block.current {
+    animation: block-bounce 0.8s ease-in-out infinite;
+    box-shadow: 0 0 16px rgba(245, 197, 66, 0.6);
+}
+
+.q-block.correct {
+    background: var(--success);
+    border-color: #388e3c;
+}
+
+.q-block.correct::after {
+    content: '\2713';
+    position: absolute;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.q-block.wrong {
+    background: var(--error);
+    border-color: #c0392b;
+}
+
+.q-block.wrong::after {
+    content: '\2717';
+    position: absolute;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.q-block.locked {
+    background: #888;
+    border-color: #666;
+    opacity: 0.7;
+}
+
+@keyframes block-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* ===== Münzen-Burst ===== */
+@keyframes coin-fly {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    60% { transform: translateY(-50px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-70px) scale(0.5); opacity: 0; }
+}
+
+.coin-burst {
+    position: absolute;
+    font-size: 1.4rem;
+    pointer-events: none;
+    animation: coin-fly 0.7s ease-out forwards;
+}
+
+/* ===== Charakter (Pixel-Art via CSS) ===== */
+.character {
+    position: absolute;
+    bottom: 50px;
+    width: 34px;
+    height: 44px;
+    transition: left 0.6s cubic-bezier(.25,.46,.45,.94);
+    z-index: 10;
+}
+
+.char-body {
+    position: relative;
+    width: 34px;
+    height: 44px;
+}
+
+/* Mütze */
+.char-cap {
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    width: 30px;
+    height: 12px;
+    background: #e53935;
+    border-radius: 8px 8px 2px 2px;
+    border: 2px solid #b71c1c;
+}
+
+.char-cap::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: -2px;
+    width: 34px;
+    height: 6px;
+    background: #e53935;
+    border-radius: 2px;
+    border: 2px solid #b71c1c;
+}
+
+/* Kopf */
+.char-head {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 24px;
+    height: 20px;
+    background: #ffcc80;
+    border-radius: 6px 6px 4px 4px;
+    border: 2px solid #e0a050;
+}
+
+/* Auge */
+.char-eye {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    width: 5px;
+    height: 5px;
+    background: #333;
+    border-radius: 50%;
+}
+
+/* Hemd */
+.char-shirt {
+    position: absolute;
+    top: 18px;
+    left: 5px;
+    width: 24px;
+    height: 14px;
+    background: #e53935;
+    border-radius: 2px;
+    border: 2px solid #b71c1c;
+}
+
+/* Beine */
+.char-legs {
+    position: absolute;
+    top: 30px;
+    left: 7px;
+    width: 20px;
+    height: 14px;
+    background: #1565c0;
+    border-radius: 0 0 4px 4px;
+    border: 2px solid #0d47a1;
+}
+
+/* Lauf-Animation */
+@keyframes walk-bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(-2deg); }
+    75% { transform: translateY(-3px) rotate(2deg); }
+}
+
+.character.walking .char-body {
+    animation: walk-bob 0.3s ease-in-out infinite;
+}
+
+/* Sprung-Animation */
+@keyframes char-jump {
+    0% { transform: translateY(0); }
+    40% { transform: translateY(-30px); }
+    100% { transform: translateY(0); }
+}
+
+.character.jumping .char-body {
+    animation: char-jump 0.5s ease-out;
+}
+
+/* Stolper-Animation */
+@keyframes char-stumble {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(-15deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0); }
+}
+
+.character.stumble .char-body {
+    animation: char-stumble 0.5s ease;
+}
+
+/* Star-Power */
+.character.star-power .char-body {
+    animation: walk-bob 0.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px gold) brightness(1.2);
+}
+
+/* ===== Fahnenmast am Ende ===== */
+.flag-pole {
+    position: absolute;
+    bottom: 50px;
+    width: 6px;
+    height: 120px;
+    background: #666;
+    border-radius: 3px;
+}
+
+.flag-pole::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 6px;
+    width: 36px;
+    height: 24px;
+    background: #e53935;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.flag-pole::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -3px;
+    width: 12px;
+    height: 12px;
+    background: var(--coin);
+    border-radius: 50%;
+}
+
+/* ===== Spiel-Bereich (Aufgabe + Numpad) ===== */
 .game-area {
     background: var(--card-bg);
     border-radius: var(--radius);
-    padding: 25px 20px;
+    padding: 16px 16px 12px;
     box-shadow: var(--shadow);
     text-align: center;
     position: relative;
     overflow: hidden;
+    margin-top: 8px;
 }
 
 .task-display {
-    font-size: 3rem;
+    font-size: 2.4rem;
     font-weight: 800;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 12px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     transition: all 0.3s;
     border-radius: var(--radius-sm);
 }
@@ -563,7 +955,7 @@ body {
 
 .task-question {
     color: var(--primary);
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     animation: questionPulse 1.5s ease-in-out infinite;
 }
 
@@ -574,16 +966,16 @@ body {
 
 /* ===== Antwort-Anzeige ===== */
 .answer-display {
-    width: 130px;
-    padding: 12px;
-    font-size: 2.2rem;
+    width: 110px;
+    padding: 8px;
+    font-size: 2rem;
     font-weight: 800;
     text-align: center;
     border: 3px solid #E0E0E0;
     border-radius: var(--radius-sm);
     background: #FAFAFE;
     color: var(--primary);
-    min-height: 60px;
+    min-height: 50px;
     line-height: 1.2;
     transition: all 0.2s;
     user-select: none;
@@ -598,21 +990,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 /* ===== Zahlenblock ===== */
 .numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    max-width: 280px;
+    gap: 6px;
+    max-width: 260px;
     margin: 0 auto;
 }
 
 .numpad-btn {
-    padding: 16px 10px;
-    font-size: 1.5rem;
+    padding: 12px 8px;
+    font-size: 1.3rem;
     font-weight: 700;
     font-family: inherit;
     border: none;
@@ -659,7 +1051,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(240, 244, 255, 0.95);
+    background: rgba(26, 26, 46, 0.95);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -674,8 +1066,9 @@ body {
 .countdown-num {
     font-size: 6rem;
     font-weight: 900;
-    color: var(--primary);
-    text-shadow: 0 4px 15px var(--primary-glow);
+    color: var(--coin);
+    text-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    font-family: 'Courier New', 'Consolas', monospace;
 }
 
 .countdown-pop {
@@ -695,10 +1088,10 @@ body {
 
 /* ===== Feedback ===== */
 .feedback {
-    margin-top: 15px;
-    padding: 12px 18px;
+    margin-top: 10px;
+    padding: 8px 14px;
     border-radius: var(--radius-sm);
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
     transition: all 0.3s;
 }
@@ -821,25 +1214,6 @@ body {
 }
 
 /* ===== Animationen ===== */
-.bounce {
-    animation: bounce 0.6s ease;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.shake {
-    animation: shake 0.5s ease;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
-}
-
 .pop {
     animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -871,21 +1245,21 @@ body {
     }
 
     .task-display {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
     }
 
     .task-question {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
 
     .answer-display {
-        font-size: 1.8rem;
-        width: 110px;
+        font-size: 1.6rem;
+        width: 90px;
     }
 
     .numpad-btn {
-        padding: 14px 8px;
-        font-size: 1.3rem;
+        padding: 10px 6px;
+        font-size: 1.1rem;
     }
 
     .level-grid {
@@ -898,5 +1272,9 @@ body {
 
     .countdown-num {
         font-size: 4rem;
+    }
+
+    .game-viewport {
+        height: 220px;
     }
 }

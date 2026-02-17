@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MatheCheck - Mathe-Spaß für Kinder!</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -40,10 +40,11 @@
                     <div class="level-desc">Addition bis 20</div>
                     <div class="level-stars" id="stars-level-1"></div>
                 </button>
-                <button class="level-card level-locked" disabled>
-                    <div class="level-icon">🔒</div>
+                <button class="level-card level-unlocked" data-level="2">
+                    <div class="level-icon level-icon-bounce">➖</div>
                     <div class="level-number">Level 2</div>
-                    <div class="level-desc">Kommt bald!</div>
+                    <div class="level-desc">Subtraktion bis 10</div>
+                    <div class="level-stars" id="stars-level-2"></div>
                 </button>
                 <button class="level-card level-locked" disabled>
                     <div class="level-icon">🔒</div>
@@ -69,22 +70,33 @@
 
     <!-- Spiel-Screen -->
     <div id="screen-game" class="screen">
-        <div class="container">
-            <div class="game-header">
-                <div class="game-info">
-                    <span id="game-level">Level 1</span>
-                    <span id="game-score">✅ 0</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                    <span class="progress-text" id="progress-text">1 / 30</span>
-                </div>
-                <div id="streak-display" class="streak-display hidden"></div>
+        <div class="container game-container">
+            <!-- HUD -->
+            <div class="game-hud">
+                <span class="hud-level" id="game-level">LEVEL 1</span>
+                <span class="hud-score" id="game-score">⭐ 0</span>
             </div>
-            <div class="game-area">
-                <div class="game-mascot-row">
-                    <div id="game-mascot" class="mascot mascot-game">🦊</div>
+
+            <!-- Fortschritt -->
+            <div class="hud-progress">
+                <div class="hud-progress-bar">
+                    <div class="hud-progress-fill" id="progress-fill"></div>
                 </div>
+                <span class="hud-progress-text" id="progress-text">0/30</span>
+            </div>
+
+            <!-- Spielwelt Viewport -->
+            <div class="game-viewport" id="game-viewport">
+                <div class="game-world" id="game-world">
+                    <!-- Wird dynamisch generiert -->
+                </div>
+            </div>
+
+            <!-- Streak -->
+            <div id="streak-display" class="streak-display hidden"></div>
+
+            <!-- Aufgabe + Antwort -->
+            <div class="game-area">
                 <div class="task-display" id="task-display">
                     <span id="task-num1">5</span>
                     <span id="task-op">+</span>
