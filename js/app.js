@@ -39,6 +39,7 @@ const App = (() => {
         resultMessage: document.getElementById('result-message'),
         resultMascot: document.getElementById('result-mascot'),
         jokeText: document.getElementById('joke-text'),
+        resultTotal: document.getElementById('result-total'),
         btnRetry: document.getElementById('btn-retry'),
         btnBackLevels: document.getElementById('btn-back-levels'),
         confettiCanvas: document.getElementById('confetti-canvas'),
@@ -573,11 +574,16 @@ const App = (() => {
     }
 
     function initGame() {
-        // Zurück-Button: zurück zur Level-Auswahl
+        // Zurück-Button: Ergebnis anzeigen oder zurück zur Level-Auswahl
         if (els.btnGameBack) {
             els.btnGameBack.addEventListener('click', function() {
                 Sounds.click();
-                showLevelScreen(Storage.getPlayerName());
+                var progress = Game.getProgress();
+                if (progress.currentTask > 0) {
+                    showResult(progress.score, progress.currentTask);
+                } else {
+                    showLevelScreen(Storage.getPlayerName());
+                }
             });
         }
 
@@ -610,16 +616,22 @@ const App = (() => {
     }
 
     // ===== Ergebnis =====
-    function showResult(score) {
+    function showResult(score, answered) {
         var total = Game.getTotalTasks();
-        var pct = score / total;
+        if (answered === undefined) answered = total;
+        var pct = answered > 0 ? score / answered : 0;
 
         Storage.saveRoundResult(currentLevel, score);
 
         els.resultScore.textContent = score;
+        els.resultTotal.textContent = 'von ' + answered + ' richtig';
         els.resultStars.textContent = getStarsForScore(score);
 
-        if (pct >= 1) {
+        if (answered < total) {
+            els.resultTitle.textContent = 'Abgebrochen';
+            els.resultMessage.textContent = score + ' von ' + answered + ' Aufgaben richtig beantwortet.';
+            setMascot('idle');
+        } else if (pct >= 1) {
             els.resultTitle.textContent = 'Perfekt! 🏆';
             els.resultMessage.textContent = 'Alle richtig – du bist ein Mathe-Genie!';
             setMascot('superHappy');
