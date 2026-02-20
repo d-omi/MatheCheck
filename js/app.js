@@ -632,11 +632,10 @@ const App = (() => {
             els.resultMessage.textContent = score + ' von ' + answered + ' Aufgaben richtig beantwortet.';
             setMascot('idle');
         } else if (pct >= 1) {
-            els.resultTitle.textContent = 'Perfekt! 🏆';
+            els.resultTitle.textContent = 'Perfekt! 🏆🎆';
             els.resultMessage.textContent = 'Alle richtig – du bist ein Mathe-Genie!';
             setMascot('superHappy');
-            launchConfetti();
-            launchConfetti();
+            launchFireworks();
         } else if (pct >= 0.8) {
             els.resultTitle.textContent = 'Großartig! 🎉';
             els.resultMessage.textContent = 'Fast alles richtig – super gemacht!';
@@ -714,6 +713,122 @@ const App = (() => {
                 ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
                 ctx.restore();
             });
+            frame++;
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    }
+
+    // ===== Feuerwerk (bei 66/66) =====
+    function launchFireworks() {
+        var canvas = els.confettiCanvas;
+        var ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        var rockets = [];
+        var sparks = [];
+        var colors = ['#FF5252', '#FFD700', '#4CAF50', '#6C63FF', '#FF69B4', '#00BCD4', '#FF9800', '#E91E63'];
+        var frame = 0;
+        var maxFrames = 360;
+        var nextRocket = 0;
+
+        function spawnRocket() {
+            rockets.push({
+                x: canvas.width * (0.15 + Math.random() * 0.7),
+                y: canvas.height,
+                targetY: canvas.height * (0.1 + Math.random() * 0.35),
+                speed: 4 + Math.random() * 3,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                trail: []
+            });
+        }
+
+        function explode(r) {
+            var count = 60 + Math.floor(Math.random() * 40);
+            for (var i = 0; i < count; i++) {
+                var angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.3;
+                var speed = 1.5 + Math.random() * 3.5;
+                sparks.push({
+                    x: r.x,
+                    y: r.y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: r.color,
+                    life: 1,
+                    decay: 0.008 + Math.random() * 0.012,
+                    size: 2 + Math.random() * 2
+                });
+            }
+        }
+
+        function animate() {
+            if (frame >= maxFrames && sparks.length === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Neue Raketen starten
+            if (frame < maxFrames - 60 && frame >= nextRocket) {
+                spawnRocket();
+                nextRocket = frame + 20 + Math.floor(Math.random() * 30);
+            }
+
+            // Raketen zeichnen und bewegen
+            for (var i = rockets.length - 1; i >= 0; i--) {
+                var r = rockets[i];
+                r.trail.push({ x: r.x, y: r.y });
+                if (r.trail.length > 8) r.trail.shift();
+                r.y -= r.speed;
+                r.x += (Math.random() - 0.5) * 0.8;
+
+                // Schweif zeichnen
+                for (var t = 0; t < r.trail.length; t++) {
+                    var alpha = t / r.trail.length * 0.6;
+                    ctx.beginPath();
+                    ctx.arc(r.trail[t].x, r.trail[t].y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,255,200,' + alpha + ')';
+                    ctx.fill();
+                }
+
+                // Rakete selbst
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+
+                if (r.y <= r.targetY) {
+                    explode(r);
+                    Sounds.correct();
+                    rockets.splice(i, 1);
+                }
+            }
+
+            // Funken zeichnen und bewegen
+            for (var j = sparks.length - 1; j >= 0; j--) {
+                var s = sparks[j];
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vy += 0.04; // Schwerkraft
+                s.life -= s.decay;
+
+                if (s.life <= 0) {
+                    sparks.splice(j, 1);
+                    continue;
+                }
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size * s.life, 0, Math.PI * 2);
+                ctx.globalAlpha = s.life;
+                ctx.fillStyle = s.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+
             frame++;
             requestAnimationFrame(animate);
         }
